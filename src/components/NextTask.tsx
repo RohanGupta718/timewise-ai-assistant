@@ -1,3 +1,4 @@
+import React from "react";
 import { Task, StudentProfile } from "@/types/timewise";
 import { SubjectBadge } from "./SubjectBadge";
 import { motion, AnimatePresence } from "framer-motion";
