@@ -119,5 +119,3 @@ export function NextTask({ profile, tasks, onComplete, onSkip }: Props) {
     </div>
   );
 }
-
-import React from "react";
