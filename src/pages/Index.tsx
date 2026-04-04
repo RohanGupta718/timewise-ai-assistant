@@ -5,6 +5,7 @@ import { Assignments, computePriority } from "@/components/Assignments";
 import { Dashboard } from "@/components/Dashboard";
 import { NextTask } from "@/components/NextTask";
 import { BookOpen, LayoutDashboard, Sparkles, ClipboardList } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 type Tab = "onboarding" | "assignments" | "dashboard" | "next";
 
