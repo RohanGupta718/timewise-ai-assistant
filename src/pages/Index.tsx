@@ -5,6 +5,7 @@ import { Assignments, computePriority } from "@/components/Assignments";
 import { Dashboard } from "@/components/Dashboard";
 import { NextTask } from "@/components/NextTask";
 import { BookOpen, LayoutDashboard, Sparkles, ClipboardList } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 type Tab = "onboarding" | "assignments" | "dashboard" | "next";
 
@@ -64,7 +65,10 @@ export default function Index() {
       {/* Nav */}
       <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border">
         <div className="max-w-6xl mx-auto px-4 flex items-center h-14">
-          <span className="font-extrabold text-lg text-foreground mr-6 shrink-0">⏱ TimeWise</span>
+<span className="flex items-center gap-2 font-extrabold text-lg text-foreground mr-6 shrink-0">
+            <img src={logo} alt="TimeWise" className="h-8 w-8 rounded-full" />
+            TimeWise
+          </span>
           <nav className="flex gap-1 overflow-x-auto">
             {NAV_ITEMS.map((item) => {
               const disabled = isDisabled(item.id);
