@@ -60,14 +60,14 @@ export function Onboarding({ onComplete }: Props) {
           <span className="text-muted-foreground font-medium">{Math.round(progress)}%</span>
         </div>
         <div className="h-2 bg-secondary rounded-full overflow-hidden">
-          <div className="h-full gradient-primary rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
+          <div className="h-full gradient-primary rounded-full transition-all duration-500 ease-out shadow-glow" style={{ width: `${progress}%` }} />
         </div>
       </div>
 
-      <div className="bg-card rounded-2xl shadow-card p-6 sm:p-8">
+      <div className="bg-card rounded-2xl shadow-card border-glow p-6 sm:p-8">
         {/* Dynamic header */}
         <div className="mb-6">
-          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-1">{stepTitles[step]}</h2>
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-gradient mb-1">{stepTitles[step]}</h2>
           <p className="text-sm text-muted-foreground">{stepSubtitles[step]}</p>
         </div>
 
@@ -77,10 +77,10 @@ export function Onboarding({ onComplete }: Props) {
               <button
                 key={s}
                 onClick={() => toggleSubject(importantSubjects, setImportantSubjects, s)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all border ${
+                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   importantSubjects.includes(s)
-                    ? "gradient-primary text-primary-foreground shadow-md border-transparent"
-                    : "bg-secondary text-secondary-foreground border-border hover:border-primary/30 hover:bg-muted"
+                    ? "gradient-primary text-primary-foreground shadow-glow border-transparent"
+                    : "bg-secondary text-secondary-foreground border-glow hover:border-glow-active hover:bg-muted"
                 }`}
               >
                 {s}
@@ -95,10 +95,10 @@ export function Onboarding({ onComplete }: Props) {
               <button
                 key={t}
                 onClick={() => setPeakTime(t)}
-                className={`flex flex-col items-center gap-3 p-6 rounded-2xl border-2 transition-all ${
+                className={`flex flex-col items-center gap-3 p-6 rounded-2xl transition-all card-hover ${
                   peakTime === t
-                    ? "border-primary bg-primary/5 shadow-md"
-                    : "border-border bg-card hover:border-primary/30"
+                    ? "border-glow-active bg-accent/20 shadow-glow"
+                    : "border-glow bg-card hover:bg-secondary"
                 }`}
               >
                 <span className="text-4xl">{icon}</span>
@@ -114,10 +114,10 @@ export function Onboarding({ onComplete }: Props) {
               <button
                 key={s}
                 onClick={() => setStudyStyle(s)}
-                className={`text-left p-5 rounded-2xl border-2 transition-all ${
+                className={`text-left p-5 rounded-2xl transition-all card-hover ${
                   studyStyle === s
-                    ? "border-primary bg-primary/5 shadow-md"
-                    : "border-border bg-card hover:border-primary/30"
+                    ? "border-glow-active bg-accent/20 shadow-glow"
+                    : "border-glow bg-card hover:bg-secondary"
                 }`}
               >
                 <span className="font-display font-semibold text-foreground">{s === "Short focused bursts" ? "⚡" : "🧠"} {s}</span>
@@ -135,10 +135,10 @@ export function Onboarding({ onComplete }: Props) {
               <button
                 key={s}
                 onClick={() => toggleSubject(hardestSubjects, setHardestSubjects, s)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all border ${
+                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   hardestSubjects.includes(s)
-                    ? "gradient-primary text-primary-foreground shadow-md border-transparent"
-                    : "bg-secondary text-secondary-foreground border-border hover:border-primary/30 hover:bg-muted"
+                    ? "gradient-primary text-primary-foreground shadow-glow border-transparent"
+                    : "bg-secondary text-secondary-foreground border-glow hover:border-glow-active hover:bg-muted"
                 }`}
               >
                 {s}
@@ -157,10 +157,10 @@ export function Onboarding({ onComplete }: Props) {
               <button
                 key={m}
                 onClick={() => setMode(m)}
-                className={`text-left p-5 rounded-2xl border-2 transition-all ${
+                className={`text-left p-5 rounded-2xl transition-all card-hover ${
                   mode === m
-                    ? "border-primary bg-primary/5 shadow-md"
-                    : "border-border bg-card hover:border-primary/30"
+                    ? "border-glow-active bg-accent/20 shadow-glow"
+                    : "border-glow bg-card hover:bg-secondary"
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1">
@@ -186,7 +186,7 @@ export function Onboarding({ onComplete }: Props) {
             <button
               onClick={() => setStep(step + 1)}
               disabled={!canNext()}
-              className="px-7 py-2.5 rounded-xl text-sm font-semibold gradient-primary text-primary-foreground disabled:opacity-40 transition-all shadow-md hover:shadow-lg"
+              className="px-7 py-2.5 rounded-xl text-sm font-semibold gradient-primary text-primary-foreground disabled:opacity-40 transition-all shadow-glow hover:shadow-card-hover"
             >
               Continue →
             </button>
@@ -194,7 +194,7 @@ export function Onboarding({ onComplete }: Props) {
             <button
               onClick={handleFinish}
               disabled={!canNext()}
-              className="px-7 py-2.5 rounded-xl text-sm font-semibold gradient-primary text-primary-foreground disabled:opacity-40 transition-all shadow-md hover:shadow-lg"
+              className="px-7 py-2.5 rounded-xl text-sm font-semibold gradient-primary text-primary-foreground disabled:opacity-40 transition-all shadow-glow hover:shadow-card-hover"
             >
               Complete Setup ✨
             </button>
