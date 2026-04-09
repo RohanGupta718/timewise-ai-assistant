@@ -35,136 +35,146 @@ export function Onboarding({ onComplete }: Props) {
     }
   };
 
+  const stepTitles = [
+    "Which subjects matter most for your future?",
+    "When do you feel most productive?",
+    "What's your preferred study style?",
+    "Which subjects are hardest to start?",
+    "Choose your productivity mode",
+  ];
+
+  const stepSubtitles = [
+    "Select all that apply — this helps us prioritize your tasks",
+    "We'll schedule your most important work during this window",
+    "This shapes how we break down your study sessions",
+    "We'll give these subjects an extra push when scheduling",
+    "This controls how aggressively we adjust your plan",
+  ];
+
   return (
     <div className="max-w-2xl mx-auto">
       {/* Progress */}
       <div className="mb-8">
-        <div className="flex justify-between text-sm text-muted-foreground mb-2">
-          <span>Step {step + 1} of {totalSteps}</span>
-          <span>{Math.round(progress)}%</span>
+        <div className="flex items-center justify-between text-sm mb-3">
+          <span className="font-display font-semibold text-foreground">Step {step + 1} of {totalSteps}</span>
+          <span className="text-muted-foreground font-medium">{Math.round(progress)}%</span>
         </div>
-        <div className="h-2 bg-muted rounded-full overflow-hidden">
-          <div className="h-full gradient-primary rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
+        <div className="h-2 bg-secondary rounded-full overflow-hidden">
+          <div className="h-full gradient-primary rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
         </div>
       </div>
 
-      <div className="bg-card rounded-2xl shadow-card p-6 md:p-8">
+      <div className="bg-card rounded-2xl shadow-card p-6 sm:p-8">
+        {/* Dynamic header */}
+        <div className="mb-6">
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-1">{stepTitles[step]}</h2>
+          <p className="text-sm text-muted-foreground">{stepSubtitles[step]}</p>
+        </div>
+
         {step === 0 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-foreground">Which subjects are most important for your future studies?</h2>
-            <div className="flex flex-wrap gap-2">
-              {SUBJECTS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => toggleSubject(importantSubjects, setImportantSubjects, s)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    importantSubjects.includes(s)
-                      ? "gradient-primary text-primary-foreground shadow-md"
-                      : "bg-secondary text-secondary-foreground hover:bg-muted"
-                  }`}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
+          <div className="flex flex-wrap gap-2.5">
+            {SUBJECTS.map((s) => (
+              <button
+                key={s}
+                onClick={() => toggleSubject(importantSubjects, setImportantSubjects, s)}
+                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all border ${
+                  importantSubjects.includes(s)
+                    ? "gradient-primary text-primary-foreground shadow-md border-transparent"
+                    : "bg-secondary text-secondary-foreground border-border hover:border-primary/30 hover:bg-muted"
+                }`}
+              >
+                {s}
+              </button>
+            ))}
           </div>
         )}
 
         {step === 1 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-foreground">When do you feel most productive?</h2>
-            <div className="grid grid-cols-3 gap-3">
-              {([["🌅", "Morning"], ["☀️", "Afternoon"], ["🌙", "Evening"]] as const).map(([icon, t]) => (
-                <button
-                  key={t}
-                  onClick={() => setPeakTime(t)}
-                  className={`flex flex-col items-center gap-2 p-5 rounded-2xl border-2 transition-all ${
-                    peakTime === t
-                      ? "border-primary bg-secondary shadow-md"
-                      : "border-border bg-card hover:border-primary/40"
-                  }`}
-                >
-                  <span className="text-3xl">{icon}</span>
-                  <span className="font-semibold text-foreground">{t}</span>
-                </button>
-              ))}
-            </div>
+          <div className="grid grid-cols-3 gap-3">
+            {([["🌅", "Morning"], ["☀️", "Afternoon"], ["🌙", "Evening"]] as const).map(([icon, t]) => (
+              <button
+                key={t}
+                onClick={() => setPeakTime(t)}
+                className={`flex flex-col items-center gap-3 p-6 rounded-2xl border-2 transition-all ${
+                  peakTime === t
+                    ? "border-primary bg-primary/5 shadow-md"
+                    : "border-border bg-card hover:border-primary/30"
+                }`}
+              >
+                <span className="text-4xl">{icon}</span>
+                <span className="font-display font-semibold text-foreground">{t}</span>
+              </button>
+            ))}
           </div>
         )}
 
         {step === 2 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-foreground">Which study style do you prefer?</h2>
-            <div className="grid gap-3">
-              {(["Short focused bursts", "Long deep work sessions"] as const).map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setStudyStyle(s)}
-                  className={`text-left p-5 rounded-2xl border-2 transition-all ${
-                    studyStyle === s
-                      ? "border-primary bg-secondary shadow-md"
-                      : "border-border bg-card hover:border-primary/40"
-                  }`}
-                >
-                  <span className="font-semibold text-foreground">{s === "Short focused bursts" ? "⚡" : "🧠"} {s}</span>
-                </button>
-              ))}
-            </div>
+          <div className="grid gap-3">
+            {(["Short focused bursts", "Long deep work sessions"] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setStudyStyle(s)}
+                className={`text-left p-5 rounded-2xl border-2 transition-all ${
+                  studyStyle === s
+                    ? "border-primary bg-primary/5 shadow-md"
+                    : "border-border bg-card hover:border-primary/30"
+                }`}
+              >
+                <span className="font-display font-semibold text-foreground">{s === "Short focused bursts" ? "⚡" : "🧠"} {s}</span>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {s === "Short focused bursts" ? "25-minute Pomodoro-style sessions with breaks" : "90+ minute deep focus blocks for complex work"}
+                </p>
+              </button>
+            ))}
           </div>
         )}
 
         {step === 3 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-foreground">Which subjects do you find hardest to start?</h2>
-            <div className="flex flex-wrap gap-2">
-              {SUBJECTS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => toggleSubject(hardestSubjects, setHardestSubjects, s)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    hardestSubjects.includes(s)
-                      ? "gradient-primary text-primary-foreground shadow-md"
-                      : "bg-secondary text-secondary-foreground hover:bg-muted"
-                  }`}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
+          <div className="flex flex-wrap gap-2.5">
+            {SUBJECTS.map((s) => (
+              <button
+                key={s}
+                onClick={() => toggleSubject(hardestSubjects, setHardestSubjects, s)}
+                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all border ${
+                  hardestSubjects.includes(s)
+                    ? "gradient-primary text-primary-foreground shadow-md border-transparent"
+                    : "bg-secondary text-secondary-foreground border-border hover:border-primary/30 hover:bg-muted"
+                }`}
+              >
+                {s}
+              </button>
+            ))}
           </div>
         )}
 
         {step === 4 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-foreground">Choose your productivity mode</h2>
-            <div className="grid gap-3">
-              {([
-                ["Flexible", "🟢", "Frequent adjustments, shorter blocks, more breaks"],
-                ["Balanced", "🟡", "Moderate structure, auto-adjustments if tasks are missed"],
-                ["Strict", "🔴", "Minimal changes, high priority enforcement, reminders"],
-              ] as const).map(([m, dot, desc]) => (
-                <button
-                  key={m}
-                  onClick={() => setMode(m)}
-                  className={`text-left p-5 rounded-2xl border-2 transition-all ${
-                    mode === m
-                      ? "border-primary bg-secondary shadow-md"
-                      : "border-border bg-card hover:border-primary/40"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <span>{dot}</span>
-                    <span className="font-bold text-foreground">{m}</span>
-                    <span className="text-2xl ml-auto">{MODE_EMOJI[m]}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">{desc}</p>
-                </button>
-              ))}
-            </div>
+          <div className="grid gap-3">
+            {([
+              ["Flexible", "🟢", "Frequent adjustments, shorter blocks, more breaks"],
+              ["Balanced", "🟡", "Moderate structure, auto-adjustments if tasks are missed"],
+              ["Strict", "🔴", "Minimal changes, high priority enforcement, reminders"],
+            ] as const).map(([m, dot, desc]) => (
+              <button
+                key={m}
+                onClick={() => setMode(m)}
+                className={`text-left p-5 rounded-2xl border-2 transition-all ${
+                  mode === m
+                    ? "border-primary bg-primary/5 shadow-md"
+                    : "border-border bg-card hover:border-primary/30"
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <span>{dot}</span>
+                  <span className="font-display font-bold text-foreground">{m}</span>
+                  <span className="text-2xl ml-auto">{MODE_EMOJI[m]}</span>
+                </div>
+                <p className="text-sm text-muted-foreground">{desc}</p>
+              </button>
+            ))}
           </div>
         )}
 
-        <div className="flex justify-between mt-8">
+        <div className="flex justify-between mt-8 pt-6 border-t border-border">
           <button
             onClick={() => setStep(step - 1)}
             disabled={step === 0}
@@ -176,15 +186,15 @@ export function Onboarding({ onComplete }: Props) {
             <button
               onClick={() => setStep(step + 1)}
               disabled={!canNext()}
-              className="px-6 py-2.5 rounded-xl text-sm font-semibold gradient-primary text-primary-foreground disabled:opacity-40 transition-all shadow-md hover:shadow-lg"
+              className="px-7 py-2.5 rounded-xl text-sm font-semibold gradient-primary text-primary-foreground disabled:opacity-40 transition-all shadow-md hover:shadow-lg"
             >
-              Next →
+              Continue →
             </button>
           ) : (
             <button
               onClick={handleFinish}
               disabled={!canNext()}
-              className="px-6 py-2.5 rounded-xl text-sm font-semibold gradient-primary text-primary-foreground disabled:opacity-40 transition-all shadow-md hover:shadow-lg"
+              className="px-7 py-2.5 rounded-xl text-sm font-semibold gradient-primary text-primary-foreground disabled:opacity-40 transition-all shadow-md hover:shadow-lg"
             >
               Complete Setup ✨
             </button>
