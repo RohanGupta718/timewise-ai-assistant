@@ -39,58 +39,65 @@ export function Dashboard({ profile, tasks, completedCount }: Props) {
 
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 
+  const metrics = [
+    { icon: <Clock size={20} />, label: "Study Time", value: `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`, accent: "text-primary" },
+    { icon: <CheckCircle2 size={20} />, label: "Completed", value: String(completedCount), accent: "text-success" },
+    { icon: <ListTodo size={20} />, label: "Remaining", value: String(incompleteTasks.length), accent: "text-accent-foreground" },
+    { icon: <AlertTriangle size={20} />, label: "Due Soon", value: String(upcomingDeadlines.length), accent: "text-warning" },
+  ];
+
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="flex-1 space-y-6">
+        {/* Header */}
         <div>
-          <h2 className="text-xl font-bold text-foreground">Today's Study Plan</h2>
-          <p className="text-sm text-muted-foreground">{today}</p>
+          <h2 className="font-display text-2xl font-bold text-foreground">Today's Study Plan</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">{today}</p>
         </div>
 
         {/* Metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { icon: <Clock size={18} />, label: "Study Time", value: `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`, color: "text-primary" },
-            { icon: <CheckCircle2 size={18} />, label: "Completed", value: String(completedCount), color: "text-success" },
-            { icon: <ListTodo size={18} />, label: "Remaining", value: String(incompleteTasks.length), color: "text-accent" },
-            { icon: <AlertTriangle size={18} />, label: "Due Soon", value: String(upcomingDeadlines.length), color: "text-warning" },
-          ].map((m) => (
-            <div key={m.label} className="bg-card rounded-2xl shadow-card p-4">
-              <div className={`${m.color} mb-1`}>{m.icon}</div>
-              <p className="text-2xl font-bold text-foreground">{m.value}</p>
-              <p className="text-xs text-muted-foreground">{m.label}</p>
+          {metrics.map((m) => (
+            <div key={m.label} className="bg-card rounded-2xl shadow-card p-4 hover:shadow-card-hover transition-shadow">
+              <div className={`${m.accent} mb-2`}>{m.icon}</div>
+              <p className="font-display text-2xl font-bold text-foreground">{m.value}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{m.label}</p>
             </div>
           ))}
         </div>
 
         {/* Schedule */}
         {schedule.length === 0 ? (
-          <div className="bg-card rounded-2xl shadow-card p-12 text-center">
-            <p className="text-4xl mb-3">🎉</p>
-            <p className="text-muted-foreground font-medium">All tasks completed! Great work!</p>
+          <div className="bg-card rounded-2xl shadow-card p-16 text-center">
+            <p className="text-5xl mb-4">🎉</p>
+            <h3 className="font-display font-bold text-foreground text-lg mb-1">All tasks completed!</h3>
+            <p className="text-muted-foreground text-sm">Great work — enjoy your free time</p>
           </div>
         ) : (
           <div className="bg-card rounded-2xl shadow-card overflow-hidden">
+            <div className="px-5 py-4 border-b border-border">
+              <h3 className="font-display font-semibold text-foreground">Schedule</h3>
+            </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left px-4 py-3 text-muted-foreground font-medium">Time</th>
-                    <th className="text-left px-4 py-3 text-muted-foreground font-medium">Task</th>
-                    <th className="text-left px-4 py-3 text-muted-foreground font-medium">Subject</th>
-                    <th className="text-left px-4 py-3 text-muted-foreground font-medium">Duration</th>
-                    <th className="text-right px-4 py-3 text-muted-foreground font-medium">Priority</th>
+                  <tr className="border-b border-border bg-secondary/30">
+                    <th className="text-left px-5 py-3 text-muted-foreground font-medium text-xs uppercase tracking-wider">Time</th>
+                    <th className="text-left px-5 py-3 text-muted-foreground font-medium text-xs uppercase tracking-wider">Task</th>
+                    <th className="text-left px-5 py-3 text-muted-foreground font-medium text-xs uppercase tracking-wider">Subject</th>
+                    <th className="text-left px-5 py-3 text-muted-foreground font-medium text-xs uppercase tracking-wider">Duration</th>
+                    <th className="text-right px-5 py-3 text-muted-foreground font-medium text-xs uppercase tracking-wider">Priority</th>
                   </tr>
                 </thead>
                 <tbody>
                   {schedule.map((t, i) => (
-                    <tr key={t.id} className={`border-b border-border last:border-0 ${i === 0 ? "bg-secondary/50" : ""}`}>
-                      <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">{t.startTime}</td>
-                      <td className="px-4 py-3 text-foreground">{t.name}</td>
-                      <td className="px-4 py-3"><SubjectBadge subject={t.subject} /></td>
-                      <td className="px-4 py-3 text-muted-foreground">{t.durationMinutes} min</td>
-                      <td className="px-4 py-3 text-right">
-                        <span className="gradient-primary text-primary-foreground px-2.5 py-0.5 rounded-full text-xs font-bold">{t.priorityScore}</span>
+                    <tr key={t.id} className={`border-b border-border/50 last:border-0 transition-colors hover:bg-secondary/20 ${i === 0 ? "bg-primary/[0.03]" : ""}`}>
+                      <td className="px-5 py-3.5 font-medium text-foreground whitespace-nowrap font-display">{t.startTime}</td>
+                      <td className="px-5 py-3.5 text-foreground">{t.name}</td>
+                      <td className="px-5 py-3.5"><SubjectBadge subject={t.subject} /></td>
+                      <td className="px-5 py-3.5 text-muted-foreground">{t.durationMinutes} min</td>
+                      <td className="px-5 py-3.5 text-right">
+                        <span className="gradient-primary text-primary-foreground px-2.5 py-1 rounded-lg text-xs font-bold">{t.priorityScore}</span>
                       </td>
                     </tr>
                   ))}
