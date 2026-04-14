@@ -1,17 +1,30 @@
-export const SUBJECTS = ["Math", "Physics", "Biology", "Chemistry", "Computer Science", "English", "History", "Other"] as const;
+export const SUBJECTS = ["Mathematics", "Sciences", "English", "Humanities", "Computer Science", "Arts & Commerce"] as const;
 export type Subject = typeof SUBJECTS[number];
 
-export type PeakTime = "Morning" | "Afternoon" | "Evening";
-export type StudyStyle = "Short focused bursts" | "Long deep work sessions";
-export type ProductivityMode = "Flexible" | "Balanced" | "Strict";
+export type FocusDuration = "under20" | "20to35" | "35to60" | "over60";
+export type StartTiming = "dayBefore" | "2to3days" | "aboutWeek" | "immediately";
+export type StudyOrganization = "oneSubject" | "switchSubjects" | "mostUrgent" | "noApproach";
+export type PeakTime = "Morning" | "Afternoon" | "Evening" | "Late Night";
+export type ReadinessDelay = "immediate" | "15to30min" | "aboutHour" | "rarelyReady";
+export type DifficultApproach = "startImmediately" | "startThenStop" | "easierFirst" | "putOff";
+export type MissedSessions = "rarely" | "onceWeek" | "severalWeek" | "mostDays";
+export type StudyBlocker = "dontKnowStart" | "tooLarge" | "distracted" | "unmotivated";
+export type PlanControl = "tellMe" | "planAdjust" | "suggest" | "planMyself";
+
 export type Difficulty = "Low" | "Medium" | "High";
 
 export interface StudentProfile {
-  importantSubjects: Subject[];
+  focusDuration: FocusDuration;
+  startTiming: StartTiming;
+  studyOrganization: StudyOrganization;
   peakTime: PeakTime;
-  studyStyle: StudyStyle;
+  readinessDelay: ReadinessDelay;
+  difficultApproach: DifficultApproach;
+  missedSessions: MissedSessions;
+  studyBlocker: StudyBlocker;
+  importantSubjects: Subject[];
   hardestSubjects: Subject[];
-  mode: ProductivityMode;
+  planControl: PlanControl;
 }
 
 export interface Assignment {
@@ -37,14 +50,12 @@ export interface Task {
 }
 
 export const SUBJECT_KEY: Record<Subject, string> = {
-  Math: "math",
-  Physics: "physics",
-  Biology: "biology",
-  Chemistry: "chemistry",
-  "Computer Science": "cs",
+  Mathematics: "math",
+  Sciences: "sciences",
   English: "english",
-  History: "history",
-  Other: "other",
+  Humanities: "humanities",
+  "Computer Science": "cs",
+  "Arts & Commerce": "arts",
 };
 
 export const ESTIMATED_TIMES = [
@@ -56,20 +67,30 @@ export const ESTIMATED_TIMES = [
   { label: "2 hr", value: 120 },
 ];
 
-export const MODE_EMOJI: Record<ProductivityMode, string> = {
-  Flexible: "😊",
-  Balanced: "🎯",
-  Strict: "💪",
+export const PLAN_CONTROL_LABELS: Record<PlanControl, string> = {
+  tellMe: "Strict",
+  planAdjust: "Guided",
+  suggest: "Flexible",
+  planMyself: "Self-directed",
+};
+
+export const PLAN_CONTROL_EMOJI: Record<PlanControl, string> = {
+  tellMe: "💪",
+  planAdjust: "🎯",
+  suggest: "😊",
+  planMyself: "🧭",
 };
 
 export const PEAK_START: Record<PeakTime, string> = {
   Morning: "7:00 AM",
-  Afternoon: "2:00 PM",
+  Afternoon: "12:00 PM",
   Evening: "5:00 PM",
+  "Late Night": "9:00 PM",
 };
 
 export const PEAK_START_HOUR: Record<PeakTime, number> = {
   Morning: 7,
-  Afternoon: 14,
+  Afternoon: 12,
   Evening: 17,
+  "Late Night": 21,
 };

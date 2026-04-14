@@ -1,14 +1,14 @@
-import { StudentProfile, MODE_EMOJI, PEAK_START } from "@/types/timewise";
+import { StudentProfile, PLAN_CONTROL_EMOJI, PLAN_CONTROL_LABELS, PEAK_START } from "@/types/timewise";
 
 export function ProfileCard({ profile }: { profile: StudentProfile }) {
   return (
     <div className="bg-card rounded-2xl shadow-card overflow-hidden">
       <div className="gradient-primary p-5 flex items-center gap-3">
-        <span className="text-4xl">{MODE_EMOJI[profile.mode]}</span>
+        <span className="text-4xl">{PLAN_CONTROL_EMOJI[profile.planControl]}</span>
         <div>
           <h3 className="font-display font-bold text-primary-foreground">Your Profile</h3>
           <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-semibold bg-primary-foreground/20 text-primary-foreground">
-            {profile.mode} Mode
+            {PLAN_CONTROL_LABELS[profile.planControl]} Mode
           </span>
         </div>
       </div>
@@ -16,11 +16,6 @@ export function ProfileCard({ profile }: { profile: StudentProfile }) {
         <div className="flex justify-between items-center">
           <span className="text-muted-foreground">Peak Time</span>
           <span className="font-medium text-foreground">{PEAK_START[profile.peakTime]}</span>
-        </div>
-        <div className="border-t border-border" />
-        <div className="flex justify-between items-center">
-          <span className="text-muted-foreground">Style</span>
-          <span className="font-medium text-foreground text-right text-xs">{profile.studyStyle}</span>
         </div>
         <div className="border-t border-border" />
         <div>
