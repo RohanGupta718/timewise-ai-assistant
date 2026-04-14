@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { StudentProfile, Assignment, Task } from "@/types/timewise";
+import { StudentProfile, Assignment, Task, PLAN_CONTROL_EMOJI } from "@/types/timewise";
 import { Onboarding } from "@/components/Onboarding";
 import { Assignments, computePriority } from "@/components/Assignments";
 import { Dashboard } from "@/components/Dashboard";
@@ -62,13 +62,11 @@ export default function Index() {
 
   return (
     <div className="min-h-screen gradient-mesh relative">
-      {/* Ambient orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-primary/5 blur-3xl animate-float" />
         <div className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-accent/10 blur-3xl animate-float" style={{ animationDelay: '2s' }} />
       </div>
 
-      {/* Nav */}
       <header className="sticky top-0 z-50 glass">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 flex items-center h-16">
           <span className="flex items-center gap-2.5 font-display font-bold text-lg tracking-tight text-foreground mr-8 shrink-0">
@@ -100,13 +98,12 @@ export default function Index() {
         </div>
       </header>
 
-      {/* Content */}
       <main className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-8">
         {tab === "onboarding" && (
           profile ? (
             <div className="max-w-md mx-auto text-center space-y-6">
               <div className="bg-card rounded-2xl shadow-card border-glow p-10">
-                <p className="text-5xl mb-5 animate-float">{profile.mode === "Flexible" ? "😊" : profile.mode === "Balanced" ? "🎯" : "💪"}</p>
+                <p className="text-5xl mb-5 animate-float">{PLAN_CONTROL_EMOJI[profile.planControl]}</p>
                 <h2 className="font-display text-2xl font-bold text-gradient mb-2">Profile Complete!</h2>
                 <p className="text-muted-foreground text-sm mb-6">You're all set. Head to Assignments to get started.</p>
                 <button onClick={() => setTab("assignments")} className="gradient-primary text-primary-foreground px-8 py-3 rounded-xl font-semibold shadow-glow hover:shadow-card-hover transition-all">

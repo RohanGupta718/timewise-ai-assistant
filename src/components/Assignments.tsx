@@ -66,7 +66,7 @@ function breakdownTasks(assignment: Assignment, profile: StudentProfile): Task[]
 export { computePriority, breakdownTasks };
 
 export function Assignments({ profile, assignments, tasks, onAddAssignment, onDeleteAssignment }: Props) {
-  const [subject, setSubject] = useState<Subject>("Math");
+  const [subject, setSubject] = useState<Subject>("Mathematics");
   const [name, setName] = useState("");
   const [deadline, setDeadline] = useState("");
   const [difficulty, setDifficulty] = useState<Difficulty>("Medium");
