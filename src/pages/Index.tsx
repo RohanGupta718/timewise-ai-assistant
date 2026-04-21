@@ -4,7 +4,8 @@ import { Onboarding } from "@/components/Onboarding";
 import { Assignments, computePriority } from "@/components/Assignments";
 import { Dashboard } from "@/components/Dashboard";
 import { NextTask } from "@/components/NextTask";
-import { BookOpen, LayoutDashboard, Sparkles, ClipboardList } from "lucide-react";
+import { Login } from "@/components/Login";
+import { BookOpen, LayoutDashboard, Sparkles, ClipboardList, LogOut } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 type Tab = "onboarding" | "assignments" | "dashboard" | "next";
@@ -18,10 +19,20 @@ const NAV_ITEMS: { id: Tab; label: string; icon: React.ReactNode }[] = [
 
 export default function Index() {
   const [tab, setTab] = useState<Tab>("onboarding");
+  const [userName, setUserName] = useState<string | null>(null);
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [completedCount, setCompletedCount] = useState(0);
+
+  const handleLogout = useCallback(() => {
+    setUserName(null);
+    setProfile(null);
+    setAssignments([]);
+    setTasks([]);
+    setCompletedCount(0);
+    setTab("onboarding");
+  }, []);
 
   const handleOnboardingComplete = useCallback((p: StudentProfile) => {
     setProfile(p);
@@ -57,6 +68,10 @@ export default function Index() {
     );
   }, [recalcScores]);
 
+  if (!userName) {
+    return <Login onLogin={setUserName} />;
+  }
+
   const hasAssignments = assignments.length > 0;
   const isDisabled = (id: Tab) => !profile && id !== "onboarding" || (!hasAssignments && (id === "dashboard" || id === "next"));
 
@@ -73,7 +88,7 @@ export default function Index() {
             <img src={logo} alt="TimeWise" className="h-9 w-9 rounded-xl shadow-glow" />
             <span className="text-gradient">TimeWise</span>
           </span>
-          <nav className="flex gap-1 overflow-x-auto ml-auto">
+          <nav className="flex gap-1 overflow-x-auto ml-auto items-center">
             {NAV_ITEMS.map((item) => {
               const disabled = isDisabled(item.id);
               return (
@@ -94,6 +109,16 @@ export default function Index() {
                 </button>
               );
             })}
+            <div className="hidden md:flex items-center gap-2 ml-3 pl-3 border-l border-border">
+              <span className="text-xs text-muted-foreground">Hi, <span className="text-foreground font-semibold">{userName}</span></span>
+              <button
+                onClick={handleLogout}
+                title="Log out"
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-all"
+              >
+                <LogOut size={14} />
+              </button>
+            </div>
           </nav>
         </div>
       </header>
