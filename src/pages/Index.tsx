@@ -34,10 +34,6 @@ export default function Index() {
     setTab("onboarding");
   }, []);
 
-  if (!userName) {
-    return <Login onLogin={setUserName} />;
-  }
-
   const handleOnboardingComplete = useCallback((p: StudentProfile) => {
     setProfile(p);
     setTab("assignments");
@@ -71,6 +67,10 @@ export default function Index() {
       recalcScores(prev.map((t) => t.id === taskId ? { ...t, delayPenalty: t.delayPenalty + 2 } : t))
     );
   }, [recalcScores]);
+
+  if (!userName) {
+    return <Login onLogin={setUserName} />;
+  }
 
   const hasAssignments = assignments.length > 0;
   const isDisabled = (id: Tab) => !profile && id !== "onboarding" || (!hasAssignments && (id === "dashboard" || id === "next"));
