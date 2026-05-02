@@ -38,6 +38,7 @@ export default function Index() {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [authError, setAuthError] = useState("");
   const [isSubmittingAuth, setIsSubmittingAuth] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
@@ -160,12 +161,18 @@ export default function Index() {
 
     try {
       if (isSignUpMode) {
+        if (password !== confirmPassword) {
+          setAuthError("Passwords do not match");
+          setIsSubmittingAuth(false);
+          return;
+        }
         await createUserWithEmailAndPassword(auth, email, password);
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
       setEmail("");
       setPassword("");
+      setConfirmPassword("");
     } catch (error) {
       const code = (error as { code?: string })?.code ?? "";
       let message = "Something went wrong. Please try again.";
@@ -253,6 +260,18 @@ export default function Index() {
               required
               className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
+            {isSignUpMode && (
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                placeholder="Confirm password"
+                autoComplete="new-password"
+                minLength={6}
+                required
+                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            )}
             {authError && <p className="text-sm text-destructive">{authError}</p>}
             <button
               type="submit"
@@ -269,7 +288,7 @@ export default function Index() {
 
           <button
             type="button"
-            onClick={() => setIsSignUpMode((prev) => !prev)}
+            onClick={() => { setIsSignUpMode((prev) => !prev); setAuthError(""); setConfirmPassword(""); }}
             className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             {isSignUpMode ? "Already have an account? Login" : "No account yet? Create one"}
