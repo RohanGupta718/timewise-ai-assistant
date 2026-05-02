@@ -288,7 +288,7 @@ export default function Index() {
 
           <button
             type="button"
-            onClick={() => setIsSignUpMode((prev) => !prev)}
+            onClick={() => { setIsSignUpMode((prev) => !prev); setAuthError(""); setConfirmPassword(""); }}
             className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             {isSignUpMode ? "Already have an account? Login" : "No account yet? Create one"}
