@@ -260,6 +260,18 @@ export default function Index() {
               required
               className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
+            {isSignUpMode && (
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                placeholder="Confirm password"
+                autoComplete="new-password"
+                minLength={6}
+                required
+                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            )}
             {authError && <p className="text-sm text-destructive">{authError}</p>}
             <button
               type="submit"
