@@ -167,7 +167,33 @@ export default function Index() {
       setEmail("");
       setPassword("");
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Authentication failed.";
+      const code = (error as { code?: string })?.code ?? "";
+      let message = "Something went wrong. Please try again.";
+      switch (code) {
+        case "auth/wrong-password":
+        case "auth/invalid-credential":
+        case "auth/invalid-login-credentials":
+          message = "Wrong Password";
+          break;
+        case "auth/user-not-found":
+          message = "No account found with this email";
+          break;
+        case "auth/invalid-email":
+          message = "Invalid email address";
+          break;
+        case "auth/email-already-in-use":
+          message = "An account with this email already exists";
+          break;
+        case "auth/weak-password":
+          message = "Password is too weak (min 6 characters)";
+          break;
+        case "auth/too-many-requests":
+          message = "Too many attempts. Please try again later";
+          break;
+        case "auth/network-request-failed":
+          message = "Network error. Check your connection";
+          break;
+      }
       setAuthError(message);
     } finally {
       setIsSubmittingAuth(false);
