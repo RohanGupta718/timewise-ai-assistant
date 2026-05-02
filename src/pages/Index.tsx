@@ -161,12 +161,18 @@ export default function Index() {
 
     try {
       if (isSignUpMode) {
+        if (password !== confirmPassword) {
+          setAuthError("Passwords do not match");
+          setIsSubmittingAuth(false);
+          return;
+        }
         await createUserWithEmailAndPassword(auth, email, password);
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
       setEmail("");
       setPassword("");
+      setConfirmPassword("");
     } catch (error) {
       const code = (error as { code?: string })?.code ?? "";
       let message = "Something went wrong. Please try again.";
