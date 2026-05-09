@@ -48,6 +48,8 @@ export default function Index() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [completedCount, setCompletedCount] = useState(0);
+  const [nextTaskStarted, setNextTaskStarted] = useState(false);
+  const [deferredTaskIds, setDeferredTaskIds] = useState<string[]>([]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -77,12 +79,16 @@ export default function Index() {
           setAssignments((data.assignments as Assignment[]) ?? []);
           setTasks((data.tasks as Task[]) ?? []);
           setCompletedCount(typeof data.completedCount === "number" ? data.completedCount : 0);
+          setNextTaskStarted(false);
+          setDeferredTaskIds([]);
           setTab(((data.profile as StudentProfile | null) ? "assignments" : "onboarding"));
         } else {
           setProfile(null);
           setAssignments([]);
           setTasks([]);
           setCompletedCount(0);
+          setNextTaskStarted(false);
+          setDeferredTaskIds([]);
           setTab("onboarding");
         }
       } catch (error) {
@@ -151,6 +157,11 @@ export default function Index() {
     );
   }, [recalcScores]);
 
+  const handleEndTasks = useCallback(() => {
+    setNextTaskStarted(false);
+    setDeferredTaskIds([]);
+  }, []);
+
   const hasAssignments = assignments.length > 0;
   const isDisabled = (id: Tab) => !profile && id !== "onboarding" || (!hasAssignments && (id === "dashboard" || id === "next"));
 
@@ -214,6 +225,8 @@ export default function Index() {
     setAssignments([]);
     setTasks([]);
     setCompletedCount(0);
+    setNextTaskStarted(false);
+    setDeferredTaskIds([]);
   };
 
   if (isAuthLoading) {
@@ -385,7 +398,17 @@ export default function Index() {
           <Dashboard profile={profile} tasks={tasks} completedCount={completedCount} />
         )}
         {tab === "next" && profile && (
-          <NextTask profile={profile} tasks={tasks} onComplete={handleComplete} onSkip={handleSkip} />
+          <NextTask
+            profile={profile}
+            tasks={tasks}
+            started={nextTaskStarted}
+            deferredIds={deferredTaskIds}
+            setStarted={setNextTaskStarted}
+            setDeferredIds={setDeferredTaskIds}
+            onComplete={handleComplete}
+            onSkip={handleSkip}
+            onEndTasks={handleEndTasks}
+          />
         )}
       </main>
     </div>

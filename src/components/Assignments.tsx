@@ -26,7 +26,8 @@ function computePriority(
   const urgency = Math.min(10, Math.max(0.5, 10 / days));
   const diffScore = difficulty === "Low" ? 1 : difficulty === "Medium" ? 3 : 5;
   const importance = importantSubjects.includes(subject) ? 4 : 2;
-  return Math.round((urgency + diffScore + importance + delayPenalty) * 10) / 10;
+  const base = urgency + diffScore + importance;
+  return Math.round(Math.max(0.1, base - delayPenalty) * 10) / 10;
 }
 
 function breakdownTasks(assignment: Assignment, profile: StudentProfile): Task[] {

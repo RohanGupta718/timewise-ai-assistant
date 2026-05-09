@@ -3,19 +3,54 @@ import { Task, StudentProfile } from "@/types/timewise";
 import { SubjectBadge } from "./SubjectBadge";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { Play, CheckCircle, SkipForward } from "lucide-react";
+import { Play, CheckCircle, SkipForward, Square } from "lucide-react";
 
 interface Props {
   profile: StudentProfile;
   tasks: Task[];
+  started: boolean;
+  deferredIds: string[];
+  setStarted: React.Dispatch<React.SetStateAction<boolean>>;
+  setDeferredIds: React.Dispatch<React.SetStateAction<string[]>>;
   onComplete: (taskId: string) => void;
   onSkip: (taskId: string) => void;
+  onEndTasks: () => void;
 }
 
-export function NextTask({ profile, tasks, onComplete, onSkip }: Props) {
-  const incompleteTasks = tasks.filter((t) => !t.completed).sort((a, b) => b.priorityScore - a.priorityScore);
-  const nextTask = incompleteTasks[0] ?? null;
-  const [started, setStarted] = React.useState(false);
+function sortByPriorityRating(a: Task, b: Task): number {
+  if (b.priorityScore !== a.priorityScore) return b.priorityScore - a.priorityScore;
+  const da = new Date(a.deadline).getTime();
+  const db = new Date(b.deadline).getTime();
+  if (da !== db) return da - db;
+  return a.name.localeCompare(b.name);
+}
+
+export function NextTask({
+  profile,
+  tasks,
+  started,
+  deferredIds,
+  setStarted,
+  setDeferredIds,
+  onComplete,
+  onSkip,
+  onEndTasks,
+}: Props) {
+  const incompleteTasks = React.useMemo(
+    () => tasks.filter((t) => !t.completed).sort(sortByPriorityRating),
+    [tasks]
+  );
+
+  React.useEffect(() => {
+    setDeferredIds((prev) => prev.filter((id) => incompleteTasks.some((t) => t.id === id)));
+  }, [incompleteTasks]);
+
+  const deferredSet = React.useMemo(() => new Set(deferredIds), [deferredIds]);
+  const nextUp = incompleteTasks.filter((t) => !deferredSet.has(t.id));
+  const deferredOrdered = incompleteTasks.filter((t) => deferredSet.has(t.id));
+  const orderedQueue =
+    nextUp.length > 0 ? [...nextUp, ...deferredOrdered] : incompleteTasks;
+  const nextTask = orderedQueue[0] ?? null;
 
   if (!nextTask && !started) {
     return (
@@ -73,7 +108,7 @@ export function NextTask({ profile, tasks, onComplete, onSkip }: Props) {
           <div className="flex items-center gap-3">
             <SubjectBadge subject={nextTask.subject} className="text-sm" />
             <span className="gradient-primary text-primary-foreground px-3 py-1 rounded-lg text-sm font-bold ml-auto shadow-sm">
-              Score: {nextTask.priorityScore}
+              Priority: {nextTask.priorityScore}
             </span>
           </div>
 
@@ -105,7 +140,14 @@ export function NextTask({ profile, tasks, onComplete, onSkip }: Props) {
             <button
               onClick={() => {
                 onSkip(nextTask.id);
-                toast("Task rescheduled. Priority updated.", { duration: 2000 });
+                setDeferredIds((prev) => {
+                  const withSkip = [...prev, nextTask.id];
+                  const def = new Set(withSkip);
+                  const stillUp = incompleteTasks.filter((t) => !def.has(t.id));
+                  if (stillUp.length === 0) return [];
+                  return withSkip;
+                });
+                toast("Skipped — showing the next task.", { duration: 2000 });
               }}
               className="flex-1 py-3.5 rounded-xl font-semibold bg-secondary text-secondary-foreground transition-all hover:bg-muted shadow-md flex items-center justify-center gap-2"
             >
@@ -113,6 +155,14 @@ export function NextTask({ profile, tasks, onComplete, onSkip }: Props) {
               Skip for Now
             </button>
           </div>
+
+          <button
+            onClick={onEndTasks}
+            className="w-full py-3 rounded-xl font-semibold border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-all flex items-center justify-center gap-2"
+          >
+            <Square size={16} />
+            End Tasks
+          </button>
         </motion.div>
       </AnimatePresence>
 
