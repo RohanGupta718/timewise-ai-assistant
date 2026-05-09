@@ -93,6 +93,15 @@ export function Assignments({ profile, assignments, tasks, onAddAssignment, onDe
   };
 
   const today = new Date().toISOString().split("T")[0];
+  const completedTasks = tasks
+    .filter((t) => t.completed)
+    .sort((a, b) => new Date(b.deadline).getTime() - new Date(a.deadline).getTime());
+  const completedByAssignment = assignments
+    .map((assignment) => ({
+      assignment,
+      tasks: completedTasks.filter((task) => task.assignmentId === assignment.id),
+    }))
+    .filter((group) => group.tasks.length > 0);
 
   return (
     <div className="space-y-8">
@@ -222,6 +231,52 @@ export function Assignments({ profile, assignments, tasks, onAddAssignment, onDe
           </div>
         </div>
       )}
+
+      <div className="bg-card rounded-2xl shadow-card p-5 sm:p-6">
+        <details>
+          <summary className="list-none cursor-pointer flex items-center justify-between gap-3">
+            <span className="font-display font-semibold text-foreground">
+              Completed Tasks ({completedTasks.length})
+            </span>
+            <span className="text-xs text-muted-foreground">Click to expand</span>
+          </summary>
+
+          <div className="mt-4 border-t border-border pt-4">
+            {completedTasks.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No completed tasks yet.</p>
+            ) : (
+              <div className="space-y-4">
+                {completedByAssignment.map(({ assignment, tasks: assignmentTasks }) => (
+                  <div key={assignment.id} className="space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-foreground truncate">{assignment.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Due: {new Date(assignment.deadline).toLocaleDateString()} · {assignmentTasks.length} completed
+                        </p>
+                      </div>
+                      <SubjectBadge subject={assignment.subject} className="text-xs shrink-0" />
+                    </div>
+
+                    {assignmentTasks.map((task) => (
+                      <div
+                        key={task.id}
+                        className="flex items-center justify-between gap-3 rounded-xl border border-border bg-secondary/30 px-3 py-2.5"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{task.name}</p>
+                          <p className="text-xs text-muted-foreground">{task.durationMinutes} min</p>
+                        </div>
+                        <span className="text-xs text-muted-foreground shrink-0">Completed</span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </details>
+      </div>
     </div>
   );
 }
