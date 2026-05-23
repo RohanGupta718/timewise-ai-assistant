@@ -209,7 +209,7 @@ export function Onboarding({ onComplete }: Props) {
         </div>
       </div>
 
-      <div className="bg-card rounded-2xl shadow-card border-glow p-6 sm:p-8">
+      <div className="bg-card/95 rounded-2xl shadow-card border-glow p-6 sm:p-8">
         <div className="mb-6">
           <h2 className="font-display text-xl sm:text-2xl font-bold text-gradient mb-1">{q.title}</h2>
           <p className="text-sm text-muted-foreground">{q.subtitle}</p>

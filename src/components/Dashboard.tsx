@@ -58,7 +58,7 @@ export function Dashboard({ profile, tasks, completedCount }: Props) {
         {/* Metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {metrics.map((m) => (
-            <div key={m.label} className="bg-card rounded-2xl shadow-card p-4 hover:shadow-card-hover transition-shadow">
+            <div key={m.label} className="bg-card/95 rounded-2xl shadow-card border-glow p-4 card-hover">
               <div className={`${m.accent} mb-2`}>{m.icon}</div>
               <p className="font-display text-2xl font-bold text-foreground">{m.value}</p>
               <p className="text-xs text-muted-foreground mt-0.5">{m.label}</p>
@@ -68,13 +68,13 @@ export function Dashboard({ profile, tasks, completedCount }: Props) {
 
         {/* Schedule */}
         {schedule.length === 0 ? (
-          <div className="bg-card rounded-2xl shadow-card p-16 text-center">
+          <div className="bg-card/95 rounded-2xl shadow-card border-glow p-16 text-center card-hover">
             <p className="text-5xl mb-4">🎉</p>
             <h3 className="font-display font-bold text-foreground text-lg mb-1">All tasks completed!</h3>
             <p className="text-muted-foreground text-sm">Great work — enjoy your free time</p>
           </div>
         ) : (
-          <div className="bg-card rounded-2xl shadow-card overflow-hidden">
+          <div className="bg-card/95 rounded-2xl shadow-card border-glow overflow-hidden">
             <div className="px-5 py-4 border-b border-border">
               <h3 className="font-display font-semibold text-foreground">Schedule</h3>
             </div>

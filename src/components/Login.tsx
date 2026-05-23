@@ -34,10 +34,7 @@ export function Login({ onLogin }: LoginProps) {
 
   return (
     <div className="min-h-screen gradient-mesh relative flex items-center justify-center px-4 py-10">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-primary/10 blur-3xl animate-float" />
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-accent/20 blur-3xl animate-float" style={{ animationDelay: "2s" }} />
-      </div>
+      <div className="page-background-glow" aria-hidden="true" />
 
       <div className="relative z-10 w-full max-w-md">
         <div className="text-center mb-8">
@@ -51,7 +48,7 @@ export function Login({ onLogin }: LoginProps) {
           </p>
         </div>
 
-        <div className="bg-card rounded-2xl shadow-card border-glow p-7">
+        <div className="bg-card/95 rounded-2xl shadow-card border-glow p-7">
           <div className="flex gap-1 p-1 bg-secondary/50 rounded-xl mb-6">
             <button
               type="button"

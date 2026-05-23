@@ -67,7 +67,7 @@ export function NextTask({
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <button
           onClick={() => setStarted(true)}
-          className="gradient-primary text-primary-foreground px-14 py-7 rounded-2xl text-xl font-display font-bold shadow-lg pulse-glow transition-transform hover:scale-105 flex items-center gap-3"
+          className="gradient-primary text-primary-foreground px-14 py-7 rounded-2xl text-xl font-display font-bold shadow-lg pulse-glow transition-transform hover:-translate-y-1 hover:scale-105 flex items-center gap-3"
         >
           <Play size={24} />
           START NEXT TASK
@@ -103,7 +103,7 @@ export function NextTask({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -20, scale: 0.97 }}
           transition={{ duration: 0.3 }}
-          className="bg-card rounded-2xl shadow-card p-8 sm:p-10 space-y-6"
+          className="bg-card/95 rounded-2xl shadow-card border-glow p-8 sm:p-10 space-y-6"
         >
           <div className="flex items-center gap-3">
             <SubjectBadge subject={nextTask.subject} className="text-sm" />

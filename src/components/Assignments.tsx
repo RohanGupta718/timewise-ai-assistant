@@ -106,7 +106,7 @@ export function Assignments({ profile, assignments, tasks, onAddAssignment, onDe
   return (
     <div className="space-y-8">
       {/* Form */}
-      <div className="bg-card rounded-2xl shadow-card p-6 sm:p-8">
+      <div className="bg-card/95 rounded-2xl shadow-card border-glow p-6 sm:p-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-sm">
             <Plus size={20} className="text-primary-foreground" />
@@ -193,7 +193,7 @@ export function Assignments({ profile, assignments, tasks, onAddAssignment, onDe
 
       {/* List */}
       {assignments.length === 0 ? (
-        <div className="bg-card rounded-2xl shadow-card p-16 text-center">
+        <div className="bg-card/95 rounded-2xl shadow-card border-glow p-16 text-center card-hover">
           <p className="text-5xl mb-4">📚</p>
           <h3 className="font-display font-bold text-foreground text-lg mb-1">No assignments yet</h3>
           <p className="text-muted-foreground text-sm">Add your first assignment above to get started</p>
@@ -206,7 +206,7 @@ export function Assignments({ profile, assignments, tasks, onAddAssignment, onDe
               const aTasks = tasks.filter((t) => t.assignmentId === a.id);
               const maxPriority = Math.max(...aTasks.map((t) => t.priorityScore));
               return (
-                <div key={a.id} className="bg-card rounded-2xl shadow-card p-5 flex items-center gap-4 hover:shadow-card-hover transition-shadow">
+                <div key={a.id} className="bg-card/95 rounded-2xl shadow-card border-glow p-5 flex items-center gap-4 card-hover">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">
                       <SubjectBadge subject={a.subject} />
@@ -232,7 +232,7 @@ export function Assignments({ profile, assignments, tasks, onAddAssignment, onDe
         </div>
       )}
 
-      <div className="bg-card rounded-2xl shadow-card p-5 sm:p-6">
+      <div className="bg-card/95 rounded-2xl shadow-card border-glow p-5 sm:p-6">
         <details>
           <summary className="list-none cursor-pointer flex items-center justify-between gap-3">
             <span className="font-display font-semibold text-foreground">

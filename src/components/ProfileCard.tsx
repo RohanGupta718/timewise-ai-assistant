@@ -2,7 +2,7 @@ import { StudentProfile, PLAN_CONTROL_EMOJI, PLAN_CONTROL_LABELS, PEAK_START } f
 
 export function ProfileCard({ profile }: { profile: StudentProfile }) {
   return (
-    <div className="bg-card rounded-2xl shadow-card overflow-hidden">
+    <div className="bg-card/95 rounded-2xl shadow-card border-glow overflow-hidden card-hover">
       <div className="gradient-primary p-5 flex items-center gap-3">
         <span className="text-4xl">{PLAN_CONTROL_EMOJI[profile.planControl]}</span>
         <div>
