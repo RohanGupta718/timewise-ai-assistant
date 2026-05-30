@@ -6,7 +6,6 @@ import { PageBackground } from "@/components/PageBackground";
 import { auth } from "@/lib/firebase";
 import {
   createUserWithEmailAndPassword,
-  fetchSignInMethodsForEmail,
   onAuthStateChanged,
   signInWithEmailAndPassword,
 } from "firebase/auth";
@@ -47,13 +46,6 @@ export default function LoginPage() {
         }
         await createUserWithEmailAndPassword(auth, normalizedEmail, password);
       } else {
-        const methods = await fetchSignInMethodsForEmail(auth, normalizedEmail);
-        if (methods.length === 0) {
-          setAuthError("User doesn't exist. Please sign up first.");
-          setIsSignUpMode(true);
-          setIsSubmittingAuth(false);
-          return;
-        }
         await signInWithEmailAndPassword(auth, normalizedEmail, password);
       }
       setEmail("");
@@ -66,10 +58,11 @@ export default function LoginPage() {
         case "auth/wrong-password":
         case "auth/invalid-credential":
         case "auth/invalid-login-credentials":
-          message = "Wrong password";
+          message = "Incorrect email or password";
           break;
         case "auth/user-not-found":
-          message = "No account found with this email";
+          message = "User doesn't exist. Please sign up first.";
+          setIsSignUpMode(true);
           break;
         case "auth/invalid-email":
           message = "Invalid email address";
