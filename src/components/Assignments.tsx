@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SUBJECTS, Subject, Difficulty, ESTIMATED_TIMES, Assignment, Task, StudentProfile } from "@/types/timewise";
+import { uploadAssignmentDocument, validateAssignmentDocument } from "@/lib/assignmentDocuments";
 import { SubjectBadge } from "./SubjectBadge";
-import { Trash2, Plus } from "lucide-react";
+import { FileText, Paperclip, Trash2, Plus, X } from "lucide-react";
 
 interface Props {
+  userId: string;
   profile: StudentProfile;
   assignments: Assignment[];
   tasks: Task[];
@@ -66,30 +68,62 @@ function breakdownTasks(assignment: Assignment, profile: StudentProfile): Task[]
 
 export { computePriority, breakdownTasks };
 
-export function Assignments({ profile, assignments, tasks, onAddAssignment, onDeleteAssignment }: Props) {
+export function Assignments({ userId, profile, assignments, tasks, onAddAssignment, onDeleteAssignment }: Props) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [subject, setSubject] = useState<Subject>("Mathematics");
   const [name, setName] = useState("");
   const [deadline, setDeadline] = useState("");
   const [difficulty, setDifficulty] = useState<Difficulty>("Medium");
   const [estTime, setEstTime] = useState(30);
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !deadline) return;
-    const assignment: Assignment = {
-      id: generateId(),
-      subject,
-      name: name.trim(),
-      deadline,
-      difficulty,
-      estimatedMinutes: estTime,
-    };
-    const newTasks = breakdownTasks(assignment, profile);
-    onAddAssignment(assignment, newTasks);
-    setName("");
-    setDeadline("");
-    setDifficulty("Medium");
-    setEstTime(30);
+    if (!name.trim() || !deadline || isSubmitting) return;
+
+    setFormError("");
+    if (documentFile) {
+      const validationError = validateAssignmentDocument(documentFile);
+      if (validationError) {
+        setFormError(validationError);
+        return;
+      }
+    }
+
+    setIsSubmitting(true);
+    const assignmentId = generateId();
+
+    try {
+      let documentFields: Partial<Assignment> = {};
+      if (documentFile) {
+        documentFields = await uploadAssignmentDocument(userId, assignmentId, documentFile);
+      }
+
+      const assignment: Assignment = {
+        id: assignmentId,
+        subject,
+        name: name.trim(),
+        deadline,
+        difficulty,
+        estimatedMinutes: estTime,
+        ...documentFields,
+      };
+      const newTasks = breakdownTasks(assignment, profile);
+      onAddAssignment(assignment, newTasks);
+      setName("");
+      setDeadline("");
+      setDifficulty("Medium");
+      setEstTime(30);
+      setDocumentFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    } catch (error) {
+      console.error("Failed to add assignment:", error);
+      setFormError("Failed to upload assignment document. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const today = new Date().toISOString().split("T")[0];
@@ -181,12 +215,53 @@ export function Assignments({ profile, assignments, tasks, onAddAssignment, onDe
             </div>
           </div>
 
+          <div>
+            <label className="text-sm font-medium text-foreground mb-1.5 block">
+              Assignment Document <span className="text-muted-foreground font-normal">(optional)</span>
+            </label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,image/jpeg,image/png,image/webp,image/gif"
+              onChange={(e) => {
+                setFormError("");
+                setDocumentFile(e.target.files?.[0] ?? null);
+              }}
+              className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm text-foreground file:mr-3 file:rounded-lg file:border-0 file:bg-secondary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
+            />
+            {documentFile ? (
+              <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                <Paperclip size={14} />
+                <span className="truncate">{documentFile.name}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDocumentFile(null);
+                    if (fileInputRef.current) fileInputRef.current.value = "";
+                  }}
+                  className="ml-auto p-1 rounded-md hover:bg-secondary hover:text-foreground transition-colors"
+                  aria-label="Remove file"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <p className="mt-1.5 text-xs text-muted-foreground">PDF or image, up to 10 MB</p>
+            )}
+          </div>
+
+          {formError && (
+            <p className="text-xs text-destructive bg-destructive/10 border border-destructive/30 rounded-lg px-3 py-2">
+              {formError}
+            </p>
+          )}
+
           <button
             type="submit"
-            disabled={!name.trim() || !deadline}
+            disabled={!name.trim() || !deadline || isSubmitting}
             className="w-full py-3 rounded-xl font-semibold gradient-primary text-primary-foreground disabled:opacity-40 transition-all shadow-md hover:shadow-lg"
           >
-            Add Assignment
+            {isSubmitting ? "Uploading..." : "Add Assignment"}
           </button>
         </form>
       </div>
@@ -215,7 +290,24 @@ export function Assignments({ profile, assignments, tasks, onAddAssignment, onDe
                       }`}>{a.difficulty}</span>
                     </div>
                     <h3 className="font-display font-semibold text-foreground truncate">{a.name}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">Due: {new Date(a.deadline).toLocaleDateString()} · {aTasks.length} task{aTasks.length !== 1 ? "s" : ""}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Due: {new Date(a.deadline).toLocaleDateString()} · {aTasks.length} task{aTasks.length !== 1 ? "s" : ""}
+                      {a.documentUrl && (
+                        <>
+                          {" · "}
+                          <a
+                            href={a.documentUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-primary hover:underline"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <FileText size={12} />
+                            Document
+                          </a>
+                        </>
+                      )}
+                    </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="gradient-primary text-primary-foreground px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm">

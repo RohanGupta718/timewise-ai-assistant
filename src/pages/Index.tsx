@@ -9,6 +9,8 @@ import { PageBackground } from "@/components/PageBackground";
 import { BookOpen, LayoutDashboard, Sparkles, ClipboardList } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { auth, db } from "@/lib/firebase";
+import { deleteAssignmentDocument } from "@/lib/assignmentDocuments";
+import { isAdmin } from "@/lib/admin";
 import { onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
@@ -124,10 +126,18 @@ export default function Index() {
     setTasks((prev) => [...prev, ...newTasks]);
   }, []);
 
-  const handleDeleteAssignment = useCallback((id: string) => {
+  const handleDeleteAssignment = useCallback(async (id: string) => {
+    const assignment = assignments.find((a) => a.id === id);
+    if (assignment?.documentPath) {
+      try {
+        await deleteAssignmentDocument(assignment.documentPath);
+      } catch (error) {
+        console.error("Failed to delete assignment document:", error);
+      }
+    }
     setAssignments((prev) => prev.filter((a) => a.id !== id));
     setTasks((prev) => prev.filter((t) => t.assignmentId !== id));
-  }, []);
+  }, [assignments]);
 
   const recalcScores = useCallback((taskList: Task[]) => {
     if (!profile) return taskList;
@@ -215,6 +225,14 @@ export default function Index() {
           >
             Logout
           </button>
+          {isAdmin(user.email) && (
+            <button
+              onClick={() => navigate("/admin")}
+              className="px-3 py-1.5 text-xs rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors mr-3"
+            >
+              Admin
+            </button>
+          )}
           <nav className="flex gap-1 overflow-x-auto ml-auto">
             {NAV_ITEMS.map((item) => {
               const disabled = isDisabled(item.id);
@@ -257,8 +275,9 @@ export default function Index() {
             <Onboarding onComplete={handleOnboardingComplete} />
           )
         )}
-        {tab === "assignments" && profile && (
+        {tab === "assignments" && profile && user && (
           <Assignments
+            userId={user.uid}
             profile={profile}
             assignments={assignments}
             tasks={tasks}
@@ -273,6 +292,7 @@ export default function Index() {
           <NextTask
             profile={profile}
             tasks={tasks}
+            assignments={assignments}
             started={nextTaskStarted}
             deferredIds={deferredTaskIds}
             setStarted={setNextTaskStarted}

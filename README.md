@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+# TimeWise
 
-TODO: Document your project here
+Study planner for students — plan homework and exam prep with deadline-aware scheduling.

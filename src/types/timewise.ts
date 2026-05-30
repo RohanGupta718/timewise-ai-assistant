@@ -34,6 +34,10 @@ export interface Assignment {
   deadline: string;
   difficulty: Difficulty;
   estimatedMinutes: number;
+  documentUrl?: string;
+  documentName?: string;
+  documentPath?: string;
+  documentContentType?: string;
 }
 
 export interface Task {

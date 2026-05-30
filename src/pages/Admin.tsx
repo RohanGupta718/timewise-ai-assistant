@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
+import { FirebaseError } from "firebase/app";
 import { auth, db } from "@/lib/firebase";
 import { isAdmin } from "@/lib/admin";
 import { PageBackground } from "@/components/PageBackground";
@@ -60,8 +61,14 @@ export default function Admin() {
           };
         });
         setRows(data);
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to load users");
+      } catch (e: unknown) {
+        if (e instanceof FirebaseError && e.code === "permission-denied") {
+          setError("Missing Firestore permission. Update Firestore rules to allow admin users to read users collection.");
+        } else if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError("Failed to load users");
+        }
       } finally {
         setLoading(false);
       }

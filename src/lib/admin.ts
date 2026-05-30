@@ -1,4 +1,7 @@
-export const ADMIN_EMAILS = ["rohan.n.gupta718@gmail.com"];
+const ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS ?? "")
+  .split(",")
+  .map((value: string) => value.trim().toLowerCase())
+  .filter(Boolean);
 
 export function isAdmin(email: string | null | undefined): boolean {
   if (!email) return false;

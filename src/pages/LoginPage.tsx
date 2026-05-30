@@ -6,6 +6,7 @@ import { PageBackground } from "@/components/PageBackground";
 import { auth } from "@/lib/firebase";
 import {
   createUserWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
   onAuthStateChanged,
   signInWithEmailAndPassword,
 } from "firebase/auth";
@@ -35,6 +36,7 @@ export default function LoginPage() {
     event.preventDefault();
     setAuthError("");
     setIsSubmittingAuth(true);
+    const normalizedEmail = email.trim();
 
     try {
       if (isSignUpMode) {
@@ -43,9 +45,16 @@ export default function LoginPage() {
           setIsSubmittingAuth(false);
           return;
         }
-        await createUserWithEmailAndPassword(auth, email, password);
+        await createUserWithEmailAndPassword(auth, normalizedEmail, password);
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        const methods = await fetchSignInMethodsForEmail(auth, normalizedEmail);
+        if (methods.length === 0) {
+          setAuthError("User doesn't exist. Please sign up first.");
+          setIsSignUpMode(true);
+          setIsSubmittingAuth(false);
+          return;
+        }
+        await signInWithEmailAndPassword(auth, normalizedEmail, password);
       }
       setEmail("");
       setPassword("");
