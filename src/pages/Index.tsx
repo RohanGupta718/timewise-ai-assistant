@@ -9,7 +9,6 @@ import { PageBackground } from "@/components/PageBackground";
 import { BookOpen, LayoutDashboard, Sparkles, ClipboardList } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { auth, db } from "@/lib/firebase";
-import { deleteAssignmentDocument } from "@/lib/assignmentDocuments";
 import { isAdmin } from "@/lib/admin";
 import { onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -126,18 +125,10 @@ export default function Index() {
     setTasks((prev) => [...prev, ...newTasks]);
   }, []);
 
-  const handleDeleteAssignment = useCallback(async (id: string) => {
-    const assignment = assignments.find((a) => a.id === id);
-    if (assignment?.documentPath) {
-      try {
-        await deleteAssignmentDocument(assignment.documentPath);
-      } catch (error) {
-        console.error("Failed to delete assignment document:", error);
-      }
-    }
+  const handleDeleteAssignment = useCallback((id: string) => {
     setAssignments((prev) => prev.filter((a) => a.id !== id));
     setTasks((prev) => prev.filter((t) => t.assignmentId !== id));
-  }, [assignments]);
+  }, []);
 
   const recalcScores = useCallback((taskList: Task[]) => {
     if (!profile) return taskList;
@@ -277,7 +268,6 @@ export default function Index() {
         )}
         {tab === "assignments" && profile && user && (
           <Assignments
-            userId={user.uid}
             profile={profile}
             assignments={assignments}
             tasks={tasks}
@@ -292,7 +282,6 @@ export default function Index() {
           <NextTask
             profile={profile}
             tasks={tasks}
-            assignments={assignments}
             started={nextTaskStarted}
             deferredIds={deferredTaskIds}
             setStarted={setNextTaskStarted}

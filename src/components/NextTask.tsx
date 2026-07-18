@@ -1,14 +1,13 @@
 import React from "react";
-import { Assignment, Task, StudentProfile } from "@/types/timewise";
+import { Task, StudentProfile } from "@/types/timewise";
 import { SubjectBadge } from "./SubjectBadge";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { Play, CheckCircle, SkipForward, Square, ExternalLink, FileText } from "lucide-react";
+import { Play, CheckCircle, SkipForward, Square } from "lucide-react";
 
 interface Props {
   profile: StudentProfile;
   tasks: Task[];
-  assignments: Assignment[];
   started: boolean;
   deferredIds: string[];
   setStarted: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,7 +28,6 @@ function sortByPriorityRating(a: Task, b: Task): number {
 export function NextTask({
   profile,
   tasks,
-  assignments,
   started,
   deferredIds,
   setStarted,
@@ -53,9 +51,6 @@ export function NextTask({
   const orderedQueue =
     nextUp.length > 0 ? [...nextUp, ...deferredOrdered] : incompleteTasks;
   const nextTask = orderedQueue[0] ?? null;
-  const assignment = nextTask
-    ? assignments.find((a) => a.id === nextTask.assignmentId)
-    : undefined;
 
   if (!nextTask && !started) {
     return (
@@ -133,44 +128,6 @@ export function NextTask({
               <span>{reason}</span>
             </div>
           </div>
-
-          {assignment?.documentUrl && (
-            <div className="space-y-3 rounded-xl border border-border bg-secondary/30 p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 min-w-0">
-                  <FileText size={16} className="text-primary shrink-0" />
-                  <span className="text-sm font-medium text-foreground truncate">
-                    {assignment.documentName ?? "Assignment document"}
-                  </span>
-                </div>
-                <a
-                  href={assignment.documentUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline shrink-0"
-                >
-                  Open
-                  <ExternalLink size={12} />
-                </a>
-              </div>
-
-              {assignment.documentContentType?.startsWith("image/") && (
-                <img
-                  src={assignment.documentUrl}
-                  alt={assignment.documentName ?? "Assignment document"}
-                  className="w-full max-h-64 object-contain rounded-lg border border-border bg-background"
-                />
-              )}
-
-              {assignment.documentContentType === "application/pdf" && (
-                <iframe
-                  src={assignment.documentUrl}
-                  title={assignment.documentName ?? "Assignment document"}
-                  className="w-full h-72 rounded-lg border border-border bg-background"
-                />
-              )}
-            </div>
-          )}
 
           <div className="flex gap-3 pt-2">
             <button
